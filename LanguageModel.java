@@ -36,58 +36,58 @@ public class LanguageModel {
         String window = "";
         char c;
         In in = new In(fileName);
-        // Reads just enough characters to form the first window.
+        // Reads just enough characters to form the first window. [cite: 380]
         for (int i = 0; i < windowLength; i++) {
             if (!in.isEmpty()) {
                 window += in.readChar();
             }
         }
-        // Processes the entire text, one character at a time
+        // Processes the entire text, one character at a time [cite: 382]
         while (!in.isEmpty()) {
-            // Gets the next character
+            // Gets the next character [cite: 384]
             c = in.readChar();
-            // Checks if the window is already in the map
-            // tries to get the list of this window from the map.
-            // Let's call the retrieved list "probs" (it may be null)
+            // Checks if the window is already in the map [cite: 387]
+            // tries to get the list of this window from the map. [cite: 388]
+            // Let's call the retrieved list "probs" (it may be null) [cite: 389]
             List probs = CharDataMap.get(window);
-            // If the window was not found in the map
+            // If the window was not found in the map [cite: 390]
             if (probs == null) {
-                // Creates a new empty list, and adds (window, list) to the map
-                // Let's call the newly created list "probs"
+                // Creates a new empty list, and adds (window, list) to the map [cite: 393]
+                // Let's call the newly created list "probs" [cite: 395]
                 probs = new List();
                 CharDataMap.put(window, probs);
             }
-            // Calculates the counts of the current character.
+            // Calculates the counts of the current character. [cite: 396]
             probs.update(c);
-            // Advances the window: adds c to the window's end, and deletes the
-            // window's first character.
+            // Advances the window: adds c to the window's end, and deletes the [cite: 398]
+            // window's first character. [cite: 398]
             window = window.substring(1) + c;
         }
-        // The entire file has been processed, and all the characters have been counted.
-        // Proceeds to compute and set the p and cp fields of all the CharData objects
-        // in each linked list in the map.
+        // The entire file has been processed, and all the characters have been counted. [cite: 400]
+        // Proceeds to compute and set the p and cp fields of all the CharData objects [cite: 401]
+        // in each linked list in the map. [cite: 402]
         for (List probs : CharDataMap.values()) {
             calculateProbabilities(probs);
         }
     }
 
     // Computes and sets the probabilities (p and cp fields) of all the
-    // characters in the given list. */
-    void calculateProbabilities(List probs) {
+    // characters in the given list. */ [cite: 120, 121]
+    void calculateProbabilities(List probs) { 
         int totalCount = 0;
         for (int i = 0; i < probs.getSize(); i++) {
             totalCount += probs.get(i).count;
         }
-        double cumulativeProb = 0;
+        int cumulativeCount = 0;
         for (int i = 0; i < probs.getSize(); i++) {
             CharData cd = probs.get(i);
             cd.p = (double) cd.count / totalCount;
-            cumulativeProb += cd.p;
-            cd.cp = cumulativeProb;
+            cumulativeCount += cd.count;
+            cd.cp = (double) cumulativeCount / totalCount;
         }
     }
 
-    // Returns a random character from the given probabilities list.
+    // Returns a random character from the given probabilities list. [cite: 144]
     char getRandomChar(List probs) {
         double r = randomGenerator.nextDouble();
         for (int i = 0; i < probs.getSize(); i++) {
@@ -102,8 +102,8 @@ public class LanguageModel {
     /**
      * Generates a random text, based on the probabilities that were learned during training. 
      * @param initialText - text to start with. If initialText's last substring of size numberOfLetters
-     * doesn't appear as a key in Map, we generate no text and return only the initial text. 
-     * @param textLength - the size of text to generate
+     * doesn't appear as a key in Map, we generate no text and return only the initial text. [cite: 209]
+     * @param textLength - the size of text to generate [cite: 232]
      * @return the generated text
      */
     public String generate(String initialText, int textLength) {
@@ -143,16 +143,16 @@ public class LanguageModel {
         int generatedTextLength = Integer.parseInt(args[2]);
         Boolean randomGeneration = args[3].equals("random");
         String fileName = args[4];
-        // Create the LanguageModel object
+        // Create the LanguageModel object [cite: 271]
         LanguageModel lm;
         if (randomGeneration) {
             lm = new LanguageModel(windowLength);
         } else {
             lm = new LanguageModel(windowLength, 20);
         }
-        // Trains the model, creating the map.
+        // Trains the model, creating the map. [cite: 276]
         lm.train(fileName);
-        // Generates text, and prints it.
+        // Generates text, and prints it. [cite: 277]
         System.out.println(lm.generate(initialText, generatedTextLength));
     }
 }
