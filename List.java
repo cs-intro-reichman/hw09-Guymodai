@@ -1,5 +1,3 @@
-import org.w3c.dom.Node;
-
 /** A linked list of character data objects.
  * (Actually, a list of Node objects, each holding a reference to a character data object.
  * However, users of this class are not aware of the Node objects. As far as they are concerned,
@@ -27,13 +25,14 @@ public class List {
     /** Returns the CharData of the first element in this list. */
     public CharData getFirst() {
         if (first == null) return null;
-        return first.value; // Accessing the CharData object stored in the Node [cite: 43]
+        return first.cp; // Based on your error log, the field name is 'cp' [cite: 43]
     }
 
     /** GIVE Adds a CharData object with the given character to the beginning of this list. */
     public void addFirst(char chr) {
         CharData cd = new CharData(chr);
-        this.first = new Node(cd, this.first); // Creating a new Node with CharData [cite: 89]
+        // Using the constructor of your local Node class [cite: 89]
+        this.first = new Node(cd, this.first); 
         this.size++;
     }
     
@@ -43,7 +42,8 @@ public class List {
         String text = "(";
         Node current = this.first;
         while (current != null) {
-            text += current.value.toString() + (current.next != null ? " " : ""); // Each CharData knows how to print itself [cite: 91, 92]
+            // Each CharData knows how to print itself [cite: 91, 92]
+            text += current.cp.toString() + (current.next != null ? " " : ""); 
             current = current.next;  
         }
         return text + ")";
@@ -56,7 +56,7 @@ public class List {
         Node current = this.first;
         int index = 0;
         while (current != null) {
-            if (current.value.chr == chr) { // Comparing the character field [cite: 87]
+            if (current.cp.chr == chr) { // Comparing the character field [cite: 87]
                 return index;
             }
             current = current.next; 
@@ -77,7 +77,7 @@ public class List {
             for (int i = 0; i < index; i++) {
                 current = current.next;
             }
-            current.value.count++; // Incrementing the counter [cite: 98]
+            current.cp.count++; // Incrementing the counter [cite: 98]
         }
     }
 
@@ -87,7 +87,7 @@ public class List {
     public boolean remove(char chr) {
         Node prev = null;
         Node current = this.first;
-        while (current != null && current.value.chr != chr) {
+        while (current != null && current.cp.chr != chr) {
             prev = current;
             current = current.next;
         }
@@ -112,7 +112,7 @@ public class List {
         for (int i = 0; i < index; i++) {
             current = current.next;
         }
-        return current.value; // Returning the CharData object [cite: 95]
+        return current.cp; // Returning the CharData object [cite: 95]
     }
 
     /** Returns an iterator over the elements in this list, starting at the given index. */
@@ -122,6 +122,7 @@ public class List {
         for (int i = 0; i < index; i++) {
             current = current.next;
         }
-        return new ListIterator(current); // Starting the iterator at the specified node [cite: 97]
+        // Returns an iterator that starts at that element [cite: 97]
+        return new ListIterator(current); 
     }
 }
